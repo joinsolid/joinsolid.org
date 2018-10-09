@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Join Solid</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
+  <body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">
+        Join Solid!
+      </h1>
+
+      <p>
+        <button id="login" class="button button is-info is-rounded">Log in</button>
+        <button id="register" target="_blank" class="button button is-info is-rounded">Register</button>
+      </p>
+      <p id="logout">
+        <a id="user" href="#"></a>
+        <br>
+        <br>
+        <button class="button button is-info is-rounded">Log out</button>
+      </p>
+
+      <script src="scripts/jquery.js"></script>
+      <script src="scripts/solid-auth-client.bundle.js"></script>
+      <script src="scripts/rdflib.min.js"></script>
+
+      <script>
+
+      const FOAF = $rdf.Namespace('http://xmlns.com/foaf/0.1/')
+
+      // Log the user in and out on click
+      const popupUri = 'popup.html'
+      $('#login').click(() => solid.auth.popupLogin({ popupUri }))
+      $('#logout').click(() => solid.auth.logout())
+
+      $('#register').click( () => {
+        window.open('https://solid.inrupt.com/get-a-solid-pod', 'Get a POD | Solid');
+        return false;
+      })
+
+
+      // Update components to match the user's login status
+      solid.auth.trackSession(session => {
+        const loggedIn = !!session
+        $('#login').toggle(!loggedIn)
+        $('#register').toggle(!loggedIn)
+        $('#logout').toggle(loggedIn)
+        if (loggedIn) {
+          $('#user').text(session.webId)
+          $('#user').attr("href", session.webId)
+          $('#user').attr("target", "_blank")
+          // Use the user's WebID as default profile
+          if (!$('#profile').val())
+            $('#profile').val(session.webId)
+        }
+      })
+
+      </script>
+
+    </div>
+  </section>
+  </body>
+</html>
